@@ -1,8 +1,3 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
 name: Jamovi Module CI
 
 on:
@@ -19,19 +14,20 @@ jobs:
     runs-on: ubuntu-latest 
     strategy:
       matrix:
-        r-version: ['4.1', '4.2'] 
+        r-version: ['3.6.3']  # Alterado para R 3.6.3
 
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up R ${{ matrix.r-version }}
         uses: r-lib/actions/setup-r@v2
         with:
-          r-version: ${{ matrix.r-version }}
-          
-      - name: Install Jamovi dependencies
+          r-version: ${{ matrix.r-version }}  # Configura a versão R 3.6.3
+
+      - name: Install Jamovi dependencies for R 3.6.3
         run: |
-          install.packages(c("remotes", "jmvcore"))
-          remotes::install_github("jamovi/jmvcore")
+          install.packages("remotes")
+          remotes::install_version("jmvcore", version = "1.0.0", repos = "http://cran.us.r-project.org")  # Instala uma versão compatível com R 3.6.3
           remotes::install_deps(dependencies = TRUE)
         shell: Rscript {0}
 
