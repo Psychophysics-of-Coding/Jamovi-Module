@@ -1,0 +1,60 @@
+title: Psychophysiological Analysis
+name: psychophysiological_analysis
+version: 1.0.0
+description: Module for analyzing neurophysiological and behavioral data.
+authors:
+  - Helio Craveiro Pessoa Jr
+  - Jonathon Love
+
+options:
+  filePath:
+    type: File
+    label: CSV File Path
+    description: Select the CSV file containing the data.
+
+  condicao:
+    type: Variable
+    label: Experimental Condition
+    description: Select the variable representing the experimental conditions.
+
+  eda:
+    type: Variable
+    label: EDA
+    description: Select the EDA mean variable.
+
+  ecg:
+    type: Variable
+    label: ECG
+    description: Select the ECG heart rate (HR) variable.
+
+  eeg_alpha:
+    type: Variable
+    label: EEG Alpha
+    description: Select the EEG Alpha band variable.
+
+  eeg_beta:
+    type: Variable
+    label: EEG Beta
+    description: Select the EEG Beta band variable.
+
+  eyetracking:
+    type: Variable
+    label: Eye Tracking Fixations
+    description: Select the Eye Tracking fixations variable.
+
+results:
+  summary:
+    type: Table
+    title: Data Summary
+
+  anova:
+    type: Table
+    title: ANOVA Results
+
+  plot:
+    type: Image
+    title: Time Series Plot
+
+  heatmap:  # Add a heatmap result
+    type: Image
+    title: Eye Tracking Heatmap
