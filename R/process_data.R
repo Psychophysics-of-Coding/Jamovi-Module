@@ -1,41 +1,36 @@
-processData <- function(filePath) {
-  if (missing(filePath)) {
-    stop("O caminho do arquivo não foi fornecido.")
+# Function to ensure required packages are installed and loaded
+ensure_packages <- function(packages) {
+  for (pkg in packages) {
+    if (!requireNamespace(pkg, quietly = TRUE)) {
+      message(paste("Installing package:", pkg))
+      install.packages(pkg)
+    }
+    suppressPackageStartupMessages(library(pkg, character.only = TRUE))
   }
+}
 
-  # Importar os dados utilizando readr
-  data <- tryCatch({
-    readr::read_csv(filePath, show_col_types = FALSE)
-  }, error = function(e) {
-    stop("Erro ao ler o arquivo CSV: ", e$message)
-  })
-  
-  # Verificar colunas necessárias
-  required_columns <- c("Participante", "Condição", "EDA_mean", "ECG_HR", "EEG_alpha", "EEG_beta", "EyeTracking_Fixations", "STAI_score", "SPSES_score")
-  
-  missing_columns <- setdiff(required_columns, colnames(data))
-  
-  if (length(missing_columns) > 0) {
-    stop("Colunas ausentes: ", paste(missing_columns, collapse = ", "))
-  }
-  
-  # Converter tipos de dados
-  data <- tryCatch({
-    data %>%
-      dplyr::mutate(
-        Participante = as.factor(Participante),
-        Condição = as.factor(Condição),
-        EDA_mean = as.numeric(EDA_mean),
-        ECG_HR = as.numeric(ECG_HR),
-        EEG_alpha = as.numeric(EEG_alpha),
-        EEG_beta = as.numeric(EEG_beta),
-        EyeTracking_Fixations = as.numeric(EyeTracking_Fixations),
-        STAI_score = as.numeric(STAI_score),
-        SPSES_score = as.numeric(SPSES_score)
-      )
-  }, error = function(e) {
-    stop("Erro ao converter tipos de dados: ", e$message)
-  })
+# List of essential packages
+required_packages <- c("remotes", "jmvcore")
 
-  return(data)
+# Ensure packages are installed
+ensure_packages(required_packages)
+
+# Check if 'remotes' package is available and install 'jmvcore' from GitHub
+if (requireNamespace("remotes", quietly = TRUE)) {
+  tryCatch({
+    remotes::install_github("jamovi/jmvcore")
+    remotes::install_deps(dependencies = TRUE)
+    message("'jmvcore' package and its dependencies installed successfully.")
+  }, error = function(e) {
+    stop("Error installing 'jmvcore' package: ", e$message)
+  })
+} else {
+  stop("Error: 'remotes' package is not available.")
+}
+
+# Verify if 'jmvcore' was installed correctly
+if (!requireNamespace("jmvcore", quietly = TRUE)) {
+  stop("Error: 'jmvcore' package was not installed correctly.")
+} else {
+  message("'jmvcore' package installed successfully!")
 }

@@ -1,33 +1,44 @@
-// check-libs.js
-// This file checks for the presence of essential libraries for module execution.
-
 const { execSync } = require('child_process');
 
-// Function to check and install R packages if necessary
+// Função para garantir que os pacotes necessários estão instalados e carregados
 function ensurePackages(packages) {
     packages.forEach(pkg => {
         try {
-            execSync(`Rscript -e "if (!requireNamespace('${pkg}', quietly = TRUE)) install.packages('${pkg}', dependencies = TRUE)"`, { stdio: 'inherit' });
-            execSync(`Rscript -e "library('${pkg}')"`, { stdio: 'inherit' });
-        } catch (error) {
-            console.error(`Error installing/loading R package: ${pkg}`);
-            process.exit(1);  // Exit with error code
+            // Verifica se o pacote está resolvido
+            require.resolve(pkg);
+        } catch (e) {
+            console.log(`Pacote ausente: ${pkg}. Instalando...`);
+            // Instala o pacote usando npm
+            execSync(`npm install ${pkg}`, { stdio: 'inherit' });
+        }
+
+        try {
+            // Tenta carregar o pacote
+            require(pkg);
+            console.log(`${pkg} carregado com sucesso.`);
+        } catch (e) {
+            throw new Error(`Falha ao carregar o pacote: ${pkg}. Erro: ${e.message}`);
         }
     });
 }
 
-// Essential R packages for the module
-const requiredPackages = [
-    'dplyr',
-    'readr',
-    'ggplot2',
-    'ez',
-    'pracma',
-    'signal',
-    'jmvcore' // Use jmvcore instead of jamovi
-];
+// Lista de pacotes necessários
+const requiredPackages = ['dplyr', 'readr', 'ggplot2', 'plotly'];
 
-// Check and install the packages
+// Garante que os pacotes estão instalados
 ensurePackages(requiredPackages);
 
-console.log("All necessary R packages are installed and loaded successfully.");
+// Verifica a presença do GitHub PAT
+if (!process.env.GITHUB_PAT) {
+    throw new Error('Erro: O GitHub PAT (Personal Access Token) não está configurado. Use gitcreds::gitcreds_set() para adicionar o seu.');
+} else {
+    console.log('GitHub PAT encontrado.');
+}
+
+try {
+    // Comando para instalar o pacote jmvcore via remotes
+    execSync('Rscript -e "remotes::install_github(\'jamovi/jmvcore\')"', { stdio: 'inherit' });
+    console.log('Pacote jmvcore instalado com sucesso.');
+} catch (e) {
+    throw new Error('Erro ao instalar o pacote jmvcore: ' + e.message);
+}
