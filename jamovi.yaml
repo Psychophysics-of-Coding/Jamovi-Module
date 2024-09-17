@@ -1,0 +1,28 @@
+name: PsychophysiologicalAnalysis
+title: Psychophysiological Analysis of Code Analysis
+version: 1.0.0
+jmvVersion: 2.0.0 
+description: Module for analyzing neurophysiological and behavioral data collected in studies on the influence of LLMs and phytotherapeutics on self-efficacy and anxiety during code analysis.
+authors:
+  - Jonathon Love
+  - Contributor: Helio Craveiro Pessoa Jr
+license: GPL-3
+analyses:
+  - id: psychophysiological_analysis
+    title: Psychophysiological Analysis
+    description: Analyze neurophysiological and behavioral data.
+    ui: ui/analise_psicofisiologica.yaml 
+    r: R/psychophysiological_analysis.R
+    options:
+      - filePath
+      - condicao
+      - eda
+      - ecg
+      - eeg_alpha
+      - eeg_beta
+      - eyetracking
+    results:
+      - summary
+      - anova
+      - plot
+      - heatmap 

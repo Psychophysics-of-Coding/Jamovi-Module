@@ -1,0 +1,112 @@
+{
+  "name": "PsychophysiologicalAnalysis",
+  "title": "Psychophysiological Analysis of Code Analysis",
+  "description": "Module for analyzing neurophysiological and behavioral data (EDA, ECG, EEG, Eye Tracking) and behavioral (STAI and SPSES questionnaires) collected in studies on the influence of LLMs and phytotherapeutics on self-efficacy and anxiety during code analysis.",
+  "version": "1.0.0",
+  "authors": [
+    {
+      "name": "Pessoa Jr",
+      "email": "pessoajr@gmail.com"
+    },
+    {
+      "name": "Jonathon Love",
+      "email": "jonathon@jamovi.org"
+    }
+  ],
+  "analyses": {
+    "psychophysiological_analysis": {
+      "path": "psychophysiological_analysis.js",
+      "rDependencies": [
+        "R/check-libs.R",
+        "R/process_data.R",
+        "R/validate_data.R",
+        "R/analyze_data.R",
+        "R/scale_data.R",
+        "R/psychophysiological_analysis.R"
+      ]
+    }
+  },
+  "dependencies": [
+    {
+      "type": "R",
+      "path": "R/check-libs.R"
+    },
+    {
+      "type": "R",
+      "path": "R/process_data.R"
+    },
+    {
+      "type": "R",
+      "path": "R/validate_data.R"
+    },
+    {
+      "type": "R",
+      "path": "R/analyze_data.R"
+    },
+    {
+      "type": "R",
+      "path": "R/scale_data.R"
+    },
+    {
+      "type": "R",
+      "path": "R/psychophysiological_analysis.R"
+    },
+    {
+      "type": "js",
+      "path": "check-libs.js"
+    },
+    {
+      "type": "js",
+      "path": "validate_data.js"
+    },
+    {
+      "type": "js",
+      "path": "process_data.js"
+    },
+    {
+      "type": "js",
+      "path": "analyze_data.js"
+    },
+    {
+      "type": "js",
+      "path": "psychophysiological_analysis.js"
+    }
+  ],
+  "options": {
+    "filePath": {
+      "type": "file",
+      "label": "CSV File Path",
+      "description": "Select the CSV file containing the neurophysiological and behavioral data."
+    },
+    "condicao": {
+      "type": "variable",
+      "label": "Experimental Condition",
+      "description": "Select the variable that represents the experimental conditions."
+    },
+    "eda": {
+      "type": "variable",
+      "label": "EDA",
+      "description": "Select the EDA mean variable."
+    },
+    "ecg": {
+      "type": "variable",
+      "label": "ECG",
+      "description": "Select the ECG heart rate (HR) variable."
+    },
+    "eeg_alpha": {
+      "type": "variable",
+      "label": "EEG Alpha",
+      "description": "Select the EEG variable for the Alpha band."
+    },
+    "eeg_beta": {
+      "type": "variable",
+      "label": "EEG Beta",
+      "description": "Select the EEG variable for the Beta band."
+    },
+    "eyetracking": {
+      "type": "variable",
+      "label": "Eye Tracking",
+      "description": "Select the Eye Tracking fixations variable."
+    }
+  }
+}
