@@ -1,73 +1,41 @@
-# process_data.R
-# This file handles the pre-processing and filtering of neurophysiological data.
-
-# Import necessary libraries
-library(signal) # For signal filtering (EEG and ECG)
-library(dplyr)  # Data manipulation
-library(pracma) # Time series analysis and signal processing
-library(readr)  # Efficient reading of CSV files
-
-# Function to import data from the CSV file
-importData - function(filePath) {
-  tryCatch({
-    data - readrread_csv(filePath, show_col_types = FALSE)
-    return(data)
-  }, error = function(e) {
-    stop(paste(Error importing CSV file, e$message))
-  })
-}
-
-# Function to apply signal filtering (EEG and ECG)
-filterSignal - function(data, lowFreq, highFreq, sampleRate) {
-  tryCatch({
-    # Apply bandpass filter to signals
-    filteredData - signalbutter(4, c(lowFreq, highFreq), bandpass, sampleRate)
-    return(filteredData)
-  }, error = function(e) {
-    stop(paste(Error filtering signals, e$message))
-  })
-}
-
-# Function for artifact detection and correction in EDA and ECG
-correctArtifacts - function(signalData) {
-  tryCatch({
-    # Artifact correction using appropriate techniques
-    correctedData - pracmadetrend(signalData)
-    return(correctedData)
-  }, error = function(e) {
-    stop(paste(Error correcting artifacts, e$message))
-  })
-}
-
-# Function to scale data (assuming this is defined elsewhere)
-scaleData - function(data) {
-  # ... (Implementation of scaling logic) ... 
-}
-
-# Main function to process the data
-processData - function(filePath) {
+processData <- function(filePath) {
   if (missing(filePath)) {
-    stop(No file path provided.)
+    stop("O caminho do arquivo não foi fornecido.")
   }
 
-  # Import the data
-  data - importData(filePath)
+  # Importar os dados utilizando readr
+  data <- tryCatch({
+    readr::read_csv(filePath, show_col_types = FALSE)
+  }, error = function(e) {
+    stop("Erro ao ler o arquivo CSV: ", e$message)
+  })
+  
+  # Verificar colunas necessárias
+  required_columns <- c("Participante", "Condição", "EDA_mean", "ECG_HR", "EEG_alpha", "EEG_beta", "EyeTracking_Fixations", "STAI_score", "SPSES_score")
+  
+  missing_columns <- setdiff(required_columns, colnames(data))
+  
+  if (length(missing_columns) > 0) {
+    stop("Colunas ausentes: ", paste(missing_columns, collapse = ", "))
+  }
+  
+  # Converter tipos de dados
+  data <- tryCatch({
+    data %>%
+      dplyr::mutate(
+        Participante = as.factor(Participante),
+        Condição = as.factor(Condição),
+        EDA_mean = as.numeric(EDA_mean),
+        ECG_HR = as.numeric(ECG_HR),
+        EEG_alpha = as.numeric(EEG_alpha),
+        EEG_beta = as.numeric(EEG_beta),
+        EyeTracking_Fixations = as.numeric(EyeTracking_Fixations),
+        STAI_score = as.numeric(STAI_score),
+        SPSES_score = as.numeric(SPSES_score)
+      )
+  }, error = function(e) {
+    stop("Erro ao converter tipos de dados: ", e$message)
+  })
 
-  # Apply signal filtering to ECG and EEG
-  data$ECG_HR - filterSignal(data$ECG_HR, 0.5, 50, 500)    # Example ECG filtering
-  data$EEG_alpha - filterSignal(data$EEG_alpha, 8, 12, 500)  # Example EEG alpha band filtering
-  data$EEG_beta - filterSignal(data$EEG_beta, 13, 30, 500)   # Example EEG beta band filtering
-
-  # Apply artifact correction to EDA and ECG signals
-  data$EDA_mean - correctArtifacts(data$EDA_mean)
-  data$ECG_HR - correctArtifacts(data$ECG_HR)
-
-  # Scale the neurophysiological data
-  data$EDA_mean - scaleData(data$EDA_mean)
-  data$ECG_HR - scaleData(data$ECG_HR)
-  data$EEG_alpha - scaleData(data$EEG_alpha)
-  data$EEG_beta - scaleData(data$EEG_beta)
-
-  cat(Data processed successfully.n)
   return(data)
 }

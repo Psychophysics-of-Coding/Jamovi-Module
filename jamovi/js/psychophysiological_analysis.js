@@ -1,5 +1,3 @@
-// psychophysiological_analysis.js
-
 'use strict';
 
 const { Analysis } = require('jamovi-core');
@@ -11,37 +9,32 @@ class PsychophysiologicalAnalysis extends Analysis {
     }
 
     async run() {
-        // Check if required variables are selected
+        // Verificar se as variáveis necessárias foram selecionadas
         if (!this.options.condicao || !this.options.eda || !this.options.ecg || !this.options.eeg_alpha || !this.options.eyetracking) {
             throw new Error('Some required variables are not selected.');
         }
 
-        // Process the data
+        // Processar os dados
         let processedData;
         try {
             processedData = await processData(this.data);
-        } catch (error) {
-            throw new Error(`Error processing data: ${error.message}`);
+        } catch (e) {
+            throw new Error('Error processing data: ' + e.message);
         }
 
-        // Perform the analysis (call R functions here)
-        // ... (Your analysis logic using jmvcore.R.callFunction) ...
+        // Realizar análise (assumindo que uma função de análise exista)
+        try {
+            const analysisResult = await this.performAnalysis(processedData);
+            return analysisResult;
+        } catch (e) {
+            throw new Error('Error performing analysis: ' + e.message);
+        }
+    }
 
-        // Example: Call the R function 'psychophysiologicalAnalysis'
-        const results = await jmvcore.R.callFunction(
-            'psychophysiologicalAnalysis', 
-            processedData,
-            this.options.condicao,
-            this.options.eda,
-            this.options.ecg,
-            this.options.eeg_alpha,
-            this.options.eyetracking
-        );
-
-        // Set the results
-        this.results.set('summary', results.summary);
-        this.results.set('anova', results.anova);
-        this.results.set('plot', results.plot);
+    async performAnalysis(data) {
+        // Implementar lógica de análise aqui
+        // Exemplo: realizar ANOVA ou correlações
+        return {}; // Retornar resultados
     }
 }
 
